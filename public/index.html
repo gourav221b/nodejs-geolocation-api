@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/p5.min.js" integrity="sha512-P/Je1zlTfRugG4aRZRx9hYRVph2CkbpchkgP6ub1gNF/VNHDUNq0/WOY0CSLMmwEXxrQ7HohFmMenWGpx8ZzvQ==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js" integrity="sha512-hAm8hj9/2EIonvS+sf0G3anaY8zYHv6q7ktNlLTg8wLwFvhUavnDdH0gif8SA3U1kN0lyKBWbf1wD4+5BfaMMA==" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+
+<body>
+    <h1>data selfie app</h1>
+    <p> <a href="all.html">List</a>||<a href="index.html">Enter</a></p>
+    Latitude::<span id="latitude"></span>&deg;<br> longitude:: <span id="longitude"> </span>&deg;<br>
+    <input type="text" id='name1' placeholder="name" required/>
+    <button id="btn" type="submit">SUBMIT</button>
+    <hr>
+    <h2>VALUES SENT BY SERVER</h2>
+    <div class="status"></div>
+    <div class="timestamp"></div>
+    <div class="name"></div>
+    <div class="latitude"></div>
+    <div class="longitude"></div>
+    <script>
+        function setup() {
+            noCanvas();
+            const video = createCapture(VIDEO);
+            video.size(320, 240);
+            const btn = document.querySelector('#btn');
+
+            btn.addEventListener('click', function() {
+                if ('geolocation' in navigator) {
+                    console.log('available');
+                    navigator.geolocation.getCurrentPosition(async position => {
+                        const lat = position.coords.latitude;
+                        const lon = position.coords.longitude;
+                        const name1 = document.querySelector('#name1').value;
+                        video.loadPixels();
+                        const image64 = video.canvas.toDataURL();
+                        document.getElementById('latitude').textContent = position.coords.latitude;
+                        document.getElementById('longitude').textContent = position.coords.longitude;
+                        console.log(position.coords.latitude);
+                        console.log(position.coords.longitude);
+
+
+                        const data = {
+                            lat,
+                            lon,
+                            name1,
+                            image64
+                        };
+                        const options = {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify(data)
+                        };
+                        const response = await fetch('/api', options);
+                        const json = await response.json();
+                        document.querySelector('.status').textContent = json.status;
+                        document.querySelector('.timestamp').textContent = json.timestamp;
+                        document.querySelector('.name').textContent = json.name1;
+                        document.querySelector('.latitude').textContent = json.lat;
+                        document.querySelector('.longitude').textContent = json.lon;
+                        console.log(json);
+
+                    });
+                } else {
+                    console.log('not available');
+
+                }
+            });
+
+
+        }
+    </script>
+
+</body>
+
+</html>

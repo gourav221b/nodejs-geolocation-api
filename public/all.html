@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.1.9/p5.min.js" integrity="sha512-WIklPM6qPCIp6d3fSSr90j+1unQHUOoWDS4sdTiR8gxUTnyZ8S2Mr8e10sKKJ/bhJgpAa/qG068RDkg6fIlNFA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/0.8.0/addons/p5.dom.min.js" integrity="sha512-hAm8hj9/2EIonvS+sf0G3anaY8zYHv6q7ktNlLTg8wLwFvhUavnDdH0gif8SA3U1kN0lyKBWbf1wD4+5BfaMMA==" crossorigin="anonymous"></script>
+    <title>Document</title>
+</head>
+
+<body>
+
+    <h1>data selfie app</h1>
+    <p><a href="all.html">List</a>||<a href="index.html">Enter</a></p>
+    <p id="display"></p>
+
+    <script>
+        function setup() {
+            getData();
+            async function getData() {
+                const response = await fetch('/api');
+                const data = await response.json();
+                console.log(data);
+                for (item of data) {
+                    const root = document.createElement("p");
+                    document.body.append(root);
+                    const name = document.createElement("div");
+                    const geo = document.createElement("div");
+                    const date = document.createElement("div");
+                    const image = document.createElement('img');
+                    root.append(name, geo, date, image);
+                    name.textContent = `name:${item.name1}`;
+                    geo.textContent = `Latitude: ${item.lat} ,  Longitdue: ${item.lon}`;
+                    const dateString = new Date(item.timestamp).toLocaleString();
+                    date.textContent = `date:${dateString}`;
+                    image.src = item.image64;
+                }
+
+            }
+            noCanvas();
+        }
+    </script>
+</body>
+
+</html>
